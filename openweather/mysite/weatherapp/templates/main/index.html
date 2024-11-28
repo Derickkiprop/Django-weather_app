@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.3/cerulean/bootstrap.min.css" />
+    <title>Weather App</title>
+</head>
+
+<body>
+    <div class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a href="../" class="navbar-brand">Weather App <span class="text-info"><strong>- Django Framework</strong></span></a>
+        </div>
+    </div>
+
+    <br><br><br>
+
+    <div id="jumbotron" class="jumbotron text-center" style="background-color: #f0f8ff; margin-top: -50px;">
+        <h1 class="display-4 font-weight-bold">Weather Desktop App</h1>
+        <p class="lead">Using Python Language and Django Framework</p>
+    </div>
+
+    <!-- Search Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <form method="post" class="form-inline ml-auto">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" class="form-control" name="city" placeholder="Choose Your City ..." required>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-light">Search</button>
+                </div>
+            </div>
+        </form>
+    </nav>
+
+    <div class="container my-5">
+        <!-- Show loading spinner when data is being fetched -->
+        <div id="loading" class="text-center" style="display:none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Weather Summary -->
+        {% if country_code and coordinate and temp and pressure and humidity %}
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ city_name }}'s Weather</h5>
+                        <p class="card-text">
+                            <strong>Temperature: </strong>{{ temp }} °C<br>
+                            <strong>Condition: </strong>{{ description }}<br>
+                            <img src="http://openweathermap.org/img/w/{{ icon }}.png" alt="Weather icon" style="width: 50px;">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hourly Forecast -->
+            <div class="col-12 mb-4">
+                <h3>Hourly Forecast</h3>
+                <div class="row">
+                    {% for hour in hourly_forecast %}
+                    <div class="col-4 col-md-2 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5>{{ hour.time }}</h5>
+                                <img src="http://openweathermap.org/img/w/{{ hour.icon }}.png" alt="Weather icon" style="width: 50px;">
+                                <p>{{ hour.temp }} °C</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Air Quality Information -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title">Air Quality</h5>
+                        <p class="card-text">
+                            <strong>AQI: </strong>{{ aqi }}<br>
+                            <strong>PM10: </strong>{{ pm10 }} µg/m³<br>
+                            <strong>PM2.5: </strong>{{ pm25 }} µg/m³
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weather Alerts -->
+            {% if weather_alerts %}
+            <div class="col-12 mb-4">
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Weather Alerts!</h4>
+                    <ul>
+                        {% for alert in weather_alerts %}
+                        <li>{{ alert }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Historical Data -->
+            <div class="col-12 mb-4">
+                <h3>Historical Data</h3>
+                <ul>
+                    <li>January 1st, 2023: 15°C, Clear Sky</li>
+                    <li>January 2nd, 2023: 10°C, Light Rain</li>
+                    <!-- More historical data -->
+                </ul>
+            </div>
+
+            <!-- 7-Day Forecast -->
+            <div class="col-12 mb-4">
+                <h3>7-Day Forecast</h3>
+                <div class="row">
+                    {% for day in weekly_forecast %}
+                    <div class="col-4 col-md-2 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5>{{ day.date }}</h5>
+                                <img src="http://openweathermap.org/img/w/{{ day.icon }}.png" alt="Weather icon" style="width: 50px;">
+                                <p>{{ day.temp_max }} °C / {{ day.temp_min }} °C</p>
+                                <p>{{ day.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sunrise and Sunset Times -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title">Sunrise & Sunset</h5>
+                        <p class="card-text">
+                            <strong>Sunrise: </strong>{{ sunrise }}<br>
+                            <strong>Sunset: </strong>{{ sunset }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+           
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p>Weather data provided by <a href="https://openweathermap.org" target="_blank" class="text-white">OpenWeather</a></p>
+        <p>&copy; 2024 Weather App - Built with Django</p>
+    </footer>
+
+</body>
+
+</html>
